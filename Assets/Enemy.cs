@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float distanciaDeParada = 1.5f;
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+      /*  player = GameObject.FindGameObjectWithTag("Player").transform; */
     }
 
     // Update is called once per frame
