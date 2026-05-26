@@ -7,11 +7,13 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float distanciaDeParada = 1.5f;
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform; //identifica e guarda posição de objeto com tag Player
+        /*player = GameObject.FindGameObjectWithTag("Player").transform;*/ //identifica e guarda posição de objeto com tag Player
     }
 
     void Update()
     {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+
         if (player != null) //Verifica se encontrou o player        
         {
             float distanciaAtual = Vector2.Distance(transform.position, player.position);//compara posição do enemy com player
