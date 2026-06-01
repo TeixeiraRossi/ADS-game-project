@@ -30,10 +30,8 @@ public class Player : MonoBehaviour
 
     public void Atacar(InputAction.CallbackContext context)
     {
-        Debug.Log("ATACAR CHAMADO");
-        if (context.performed && !atacando)
+        if (context.started && !atacando)
         {
-            Debug.Log("atq");
             StartCoroutine(AttackCoroutine());
         }
     }
@@ -51,7 +49,7 @@ public class Player : MonoBehaviour
     {
         rb.linearVelocity = new Vector2(
             direcao.x * velocidade,
-            rb.linearVelocity.y
+            direcao.y * velocidade
             );
     }
 
