@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 
     [Header("Ataque")]
     public BoxCollider2D attackHitbox;
+    public GameObject attackPointerPrefab;
     public float attackDuration = 0.2f;
     private bool atacando;
 
@@ -32,6 +33,13 @@ public class Player : MonoBehaviour
     {
         if (context.started && !atacando)
         {
+            if(attackPointerPrefab != null)
+            {
+                Vector3 spawnPos = attackHitbox.transform.position;
+                Quaternion spawnRot = attackPointerPrefab.transform.rotation;
+                GameObject ptr = Instantiate(attackPointerPrefab, spawnPos, spawnRot);
+                Destroy(ptr, attackDuration);
+            }
             StartCoroutine(AttackCoroutine());
         }
     }
@@ -64,13 +72,13 @@ public class Player : MonoBehaviour
         {
             sprite.flipX = false;
 
-            attackHitbox.transform.localScale = new Vector2(0.7f,0);
+            attackHitbox.transform.localPosition = new Vector2(0.4f,0);
 
         }else if (direcao.x < 0)
         {
             sprite.flipX = true;
 
-            attackHitbox.transform.localPosition = new Vector2(-0.7f, 0);
+            attackHitbox.transform.localPosition = new Vector2(-0.4f, 0);
         }
     }
 
