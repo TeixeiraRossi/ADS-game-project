@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 40520824eb1ec284fab446081d6cfdda
+guid: 5911c37ad14de5e4bb61f300887c6464
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1291624879099020508
-    second: asa-pato_0
+      213: 2672335635377009512
+    second: asa-galo_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,23 +126,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: asa-pato_0
+      name: asa-galo_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 6
+        width: 8
         height: 11
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 42bfe3a040a331ee0800000000000000
-      internalID: -1291624879099020508
+      spriteID: 863b34b0a1b061520800000000000000
+      internalID: 2672335635377009512
       vertices: []
       indices: 
       edges: []
@@ -152,7 +152,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      asa-pato_0: -1291624879099020508
+      asa-galo_0: 2672335635377009512
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

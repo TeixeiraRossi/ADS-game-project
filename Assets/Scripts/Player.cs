@@ -16,12 +16,14 @@ public class Player : MonoBehaviour
     public GameObject attackPointerPrefab;
     public float attackDuration = 0.2f;
     private bool atacando;
+    private bool olhandoEsquerda;
+    public Vector2 attackOffset = new Vector2(0.8f, -0.2f);//Ajuste da posição do ataque
 
-    private void Awake() //
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>(); //Guarda RB do objeto a que esta anexado
 
-        attackHitbox.enabled = false;
+        /*attackHitbox.enabled = false;*/ //tava bugando a hitbox do player 2
     }
 
     public void Mover(InputAction.CallbackContext context) //Função chamada pelo Input System, recebe o contexto da ação
@@ -34,10 +36,13 @@ public class Player : MonoBehaviour
         if (context.started && !atacando)
         {
             if(attackPointerPrefab != null)
-            {
-                Vector3 spawnPos = attackHitbox.transform.position;
-                Quaternion spawnRot = attackPointerPrefab.transform.rotation;
+            {   
+                float posX = olhandoEsquerda ? -attackOffset.x : attackOffset.x;
+                Vector3 spawnPos = transform.position + new Vector3(posX, attackOffset.y, 0f);
+                Quaternion spawnRot = Quaternion.Euler(0, 0, 90);
                 GameObject ptr = Instantiate(attackPointerPrefab, spawnPos, spawnRot);
+                var sr = ptr.GetComponentInChildren<SpriteRenderer>();
+                if (sr) sr.flipY = olhandoEsquerda;
                 Destroy(ptr, attackDuration);
             }
             StartCoroutine(AttackCoroutine());
@@ -47,9 +52,9 @@ public class Player : MonoBehaviour
     private IEnumerator AttackCoroutine()
     {
         atacando = true;
-        attackHitbox.enabled = true;
+        /*attackHitbox.enabled = true;*/
         yield return new WaitForSeconds(attackDuration);
-        attackHitbox.enabled = false;
+        /*attackHitbox.enabled = false;*/
         atacando = false;
     }
 
@@ -70,15 +75,14 @@ public class Player : MonoBehaviour
     {
         if (direcao.x > 0)
         {
+            olhandoEsquerda = false;
             sprite.flipX = false;
 
-            attackHitbox.transform.localPosition = new Vector2(0.4f,0);
-
-        }else if (direcao.x < 0)
+        }
+        else if (direcao.x < 0)
         {
+            olhandoEsquerda = true;
             sprite.flipX = true;
-
-            attackHitbox.transform.localPosition = new Vector2(-0.4f, 0);
         }
     }
 
