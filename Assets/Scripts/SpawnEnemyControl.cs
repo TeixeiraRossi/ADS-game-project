@@ -7,7 +7,7 @@ public class SpawnEnemyControl : MonoBehaviour
     {
         if (colisao.CompareTag("Player"))//Verifica se colidiu com player
         {
-            Instantiate(enemy);
+            Instantiate(enemy, transform.position + Vector3.right * 6f, transform.rotation);
         }
     }
 }
