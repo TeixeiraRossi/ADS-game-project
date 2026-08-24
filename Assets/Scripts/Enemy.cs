@@ -3,32 +3,61 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     private Transform player;
-    private float speed = 3f;
+
+    [Header("Movimento")]
+    [SerializeField] private float velocidade = 3f;
     [SerializeField] private float distanciaDeParada = 1.5f;
-    void Start()
+
+    [Header("Vida")]
+    [SerializeField] private int vidaMaxima = 3;
+
+    private int vidaAtual;
+
+    private void Start()
     {
-        /*player = GameObject.FindGameObjectWithTag("Player").transform;*/ //identifica e guarda posição de objeto com tag Player
+        vidaAtual = vidaMaxima;
     }
 
-    void Update()
+    private void Update()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
 
-        if (player != null) //Verifica se encontrou o player        
+        if (playerObject == null)
+            return;
+
+        player = playerObject.transform;
+
+        float distanciaAtual = Vector2.Distance(
+            transform.position,
+            player.position
+        );
+
+        if (distanciaAtual > distanciaDeParada)
         {
-            float distanciaAtual = Vector2.Distance(transform.position, player.position);//compara posição do enemy com player
-            if (distanciaAtual > distanciaDeParada)
-            {//move o enemy ate o player, parando na distancia de parada
-                transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
-            }
+            transform.position = Vector2.MoveTowards(
+                transform.position,
+                player.position,
+                velocidade * Time.deltaTime
+            );
         }
     }
-    private void OnCollisionEnter2D(Collision2D colisao)
+
+    public void ReceberDano(int dano)
     {
-        if (colisao.gameObject.CompareTag("Player"))//Destroi o player se colidir com ele
+        vidaAtual -= dano;
+
+        Debug.Log("Inimigo recebeu dano! Vida: " + vidaAtual);
+
+        if (vidaAtual <= 0)
         {
-            Destroy(colisao.gameObject);
+            Morrer();
         }
+    }
+
+    private void Morrer()
+    {
+        Debug.Log("Inimigo morreu!");
+
+        Destroy(gameObject);
     }
 }
-

@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
     public void Mover(InputAction.CallbackContext context) //Função chamada pelo Input System, recebe o contexto da ação
     {
         direcao = context.ReadValue<Vector2>(); //Guarda direção recebida do Input System
+        Debug.Log("Movimento: " + direcao);
     }
 
     public void Atacar(InputAction.CallbackContext context)

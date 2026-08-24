@@ -197,7 +197,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
     m_ActionId: b2134b25-51c9-4710-83c1-788246a811e0
-    m_ActionName: 'Player/Atacar[/Mouse/leftButton]'
+    m_ActionName: 'Player/Atacar[/Keyboard/j]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

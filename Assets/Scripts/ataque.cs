@@ -2,20 +2,18 @@ using UnityEngine;
 
 public class ataque : MonoBehaviour
 {
-    public Player player; // arraste o Player no Inspector ou use GetComponentInParent
-
-    private void Awake()
-    {
-        if (player == null)
-            player = GetComponentInParent<Player>();
-    }
+    [SerializeField] private int dano = 1;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Enemy"))
         {
-            Destroy(other.gameObject);
+            Enemy enemy = other.GetComponent<Enemy>();
+
+            if (enemy != null)
+            {
+                enemy.ReceberDano(dano);
+            }
         }
     }
 }
-
