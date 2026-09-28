@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
-{   
+{
     [Header("Movimento")]
-    private Rigidbody2D rb; //RB do Objeto
-    private Vector2 direcao; //Direção do movimento
-    public float velocidade = 5f; //Controle de velocidade
-    public SpriteRenderer sprite; //Sprite do boneco
+    private Rigidbody2D rb;
+    private Vector2 direcao;
+    public float velocidade = 5f;
+    public SpriteRenderer sprite;
 
     [Header("Ataque")]
     public BoxCollider2D attackHitbox;
@@ -17,46 +17,105 @@ public class Player : MonoBehaviour
     public float attackDuration = 0.2f;
     private bool atacando;
     private bool olhandoEsquerda;
-    public Vector2 attackOffset = new Vector2(0.8f, -0.2f);//Ajuste da posição do ataque
+    public Vector2 attackOffset = new Vector2(0.8f, -0.2f);
+
+    [Header("Vida")]
+    [SerializeField] private int vidaMaxima = 5;
+    private int vidaAtual;
+
+    [SerializeField] private BarraVida barraVida;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>(); //Guarda RB do objeto a que esta anexado
+        rb = GetComponent<Rigidbody2D>();
 
-        /*attackHitbox.enabled = false;*/ //tava bugando a hitbox do player 2
+        // Começa o Player com a vida máxima configurada no Inspector.
+        vidaAtual = vidaMaxima;
+
+        // Inicializa a barra mostrando a vida máxima.
+        if (barraVida != null)
+        {
+            barraVida.AtualizarVida(vidaAtual, vidaMaxima);
+        }
+
+        /*attackHitbox.enabled = false;*/
     }
 
-    public void Mover(InputAction.CallbackContext context) //Função chamada pelo Input System, recebe o contexto da ação
+    // Recebe a direção do movimento através do Input System.
+    public void Mover(InputAction.CallbackContext context)
     {
-        direcao = context.ReadValue<Vector2>(); //Guarda direção recebida do Input System
-        Debug.Log("Movimento: " + direcao);
+        direcao = context.ReadValue<Vector2>();
     }
 
+    // Inicia o ataque quando o botão é pressionado.
     public void Atacar(InputAction.CallbackContext context)
     {
         if (context.started && !atacando)
         {
-            if(attackPointerPrefab != null)
-            {   
+            if (attackPointerPrefab != null)
+            {
                 float posX = olhandoEsquerda ? -attackOffset.x : attackOffset.x;
                 Vector3 spawnPos = transform.position + new Vector3(posX, attackOffset.y, 0f);
                 Quaternion spawnRot = Quaternion.Euler(0, 0, 90);
-                GameObject ptr = Instantiate(attackPointerPrefab, spawnPos, spawnRot);
+
+                GameObject ptr = Instantiate(
+                    attackPointerPrefab,
+                    spawnPos,
+                    spawnRot
+                );
+
                 var sr = ptr.GetComponentInChildren<SpriteRenderer>();
-                if (sr) sr.flipY = olhandoEsquerda;
+
+                if (sr)
+                    sr.flipY = olhandoEsquerda;
+
                 Destroy(ptr, attackDuration);
             }
+
             StartCoroutine(AttackCoroutine());
         }
     }
 
+    // Controla o pequeno intervalo em que o Player está realizando o ataque.
     private IEnumerator AttackCoroutine()
     {
         atacando = true;
+
         /*attackHitbox.enabled = true;*/
+
         yield return new WaitForSeconds(attackDuration);
+
         /*attackHitbox.enabled = false;*/
+
         atacando = false;
+    }
+
+    // Reduz a vida do Player e verifica se ele deve morrer.
+    public void ReceberDano(int dano)
+    {
+        vidaAtual -= dano;
+
+        Debug.Log("Player recebeu dano! Vida: " + vidaAtual);
+
+        if (barraVida != null)
+        {
+            barraVida.AtualizarVida(vidaAtual, vidaMaxima);
+        }
+
+        if (vidaAtual <= 0)
+        {
+            Morrer();
+        }
+    }
+
+    // Executado quando a vida do Player chega a zero.
+    private void Morrer()
+    {
+        Debug.Log("Player morreu!");
+
+        // Por enquanto apenas desativa o Player.
+        // Depois podemos substituir por animação, respawn ou Game Over.
+        gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -64,7 +123,7 @@ public class Player : MonoBehaviour
         rb.linearVelocity = new Vector2(
             direcao.x * velocidade,
             direcao.y * velocidade
-            );
+        );
     }
 
     private void Update()
@@ -72,13 +131,13 @@ public class Player : MonoBehaviour
         Flip();
     }
 
+    // Atualiza a direção visual do Player de acordo com o movimento.
     private void Flip()
     {
         if (direcao.x > 0)
         {
             olhandoEsquerda = false;
             sprite.flipX = false;
-
         }
         else if (direcao.x < 0)
         {
@@ -86,5 +145,4 @@ public class Player : MonoBehaviour
             sprite.flipX = true;
         }
     }
-
 }

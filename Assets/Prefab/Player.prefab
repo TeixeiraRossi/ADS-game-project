@@ -141,6 +141,7 @@ MonoBehaviour:
   attackPointerPrefab: {fileID: 3017409329597055789, guid: 41ee0cc95864a514ba4536558c200075, type: 3}
   attackDuration: 0.2
   attackOffset: {x: 0.8, y: 0}
+  vidaMaxima: 5
 --- !u!114 &8203291399795211585
 MonoBehaviour:
   m_ObjectHideFlags: 0
