@@ -2,7 +2,7 @@
 - Project name: ADS-game-project
 - Unity version: Unity 6000.4.3f1
 - Active game object:
-  - Name: buff-energia
-  - Tag: Untagged
+  - Name: Player(Clone)
+  - Tag: Player
   - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
