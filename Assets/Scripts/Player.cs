@@ -37,8 +37,6 @@ public class Player : MonoBehaviour
         {
             barraVida.AtualizarVida(vidaAtual, vidaMaxima);
         }
-
-        /*attackHitbox.enabled = false;*/
     }
 
     // Recebe a direção do movimento através do Input System.
@@ -105,6 +103,31 @@ public class Player : MonoBehaviour
         if (vidaAtual <= 0)
         {
             Morrer();
+        }
+    }
+
+    public void ReceberBuff(Buff.TipoBuff tipo, float quantidade)
+    {
+        switch (tipo)
+        {
+            case Buff.TipoBuff.vida:
+                vidaAtual += Mathf.RoundToInt(quantidade);
+                vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
+                barraVida.AtualizarVida(vidaAtual, vidaMaxima);
+                Debug.Log("Player recebeu buff de vida! Vida: " + vidaAtual);
+                break;
+            case Buff.TipoBuff.energia:
+                // Aqui você pode implementar a lógica para energia, se houver.
+                Debug.Log("Player recebeu buff de energia!");
+                break;
+            case Buff.TipoBuff.xp:
+                // Aqui você pode implementar a lógica para XP, se houver.
+                Debug.Log("Player recebeu buff de XP!");
+                break;
+        }
+        if (barraVida != null)
+        {
+            barraVida.AtualizarVida(vidaAtual, vidaMaxima);
         }
     }
 

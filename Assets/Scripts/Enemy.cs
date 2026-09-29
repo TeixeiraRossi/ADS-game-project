@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -85,6 +86,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Função chamada quando o inimigo colide com Player
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.CompareTag("Player"))
+        {
+            Player playerScript = collider.GetComponent<Player>();
+            if (playerScript != null)
+            {
+                playerScript.ReceberDano(1); // Aplica 1 de dano ao jogador
+                Debug.Log("Inimigo colidiu com o Player! Dano aplicado: 1");
+            }
+        }
+    }
 
     // Função chamada quando o inimigo recebe dano
     public void ReceberDano(int dano)
@@ -106,6 +120,18 @@ public class Enemy : MonoBehaviour
         {
             // Se chegou a zero, o inimigo morre
             Morrer();
+        }
+    }
+
+    public void AplicarDano(int dano)
+    {
+        if(player != null)
+        {
+            Player playerScript = player.GetComponent<Player>();
+            if(playerScript != null)
+            {
+                playerScript.ReceberDano(dano);
+            }
         }
     }
 

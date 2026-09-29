@@ -109,6 +109,8 @@ MonoBehaviour:
   velocidade: 3
   distanciaDeParada: 1.5
   vidaMaxima: 3
+  forcaKnockback: 1.5
+  duracaoStun: 0.2
 --- !u!50 &2283629210197965228
 Rigidbody2D:
   serializedVersion: 5
