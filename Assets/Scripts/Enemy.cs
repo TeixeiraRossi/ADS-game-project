@@ -94,7 +94,7 @@ public class Enemy : MonoBehaviour
             Player playerScript = collider.GetComponent<Player>();
             if (playerScript != null)
             {
-                playerScript.ReceberDano(1); // Aplica 1 de dano ao jogador
+                //playerScript.ReceberDano(1); // Aplica 1 de dano ao jogador
                 Debug.Log("Inimigo colidiu com o Player! Dano aplicado: 1");
             }
         }
@@ -123,7 +123,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void AplicarDano(int dano)
+    /*public void AplicarDano(int dano)
     {
         if(player != null)
         {
@@ -133,7 +133,7 @@ public class Enemy : MonoBehaviour
                 playerScript.ReceberDano(dano);
             }
         }
-    }
+    }*/
 
 
     // Função responsável por empurrar o inimigo para trás

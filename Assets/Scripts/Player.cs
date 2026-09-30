@@ -19,24 +19,9 @@ public class Player : MonoBehaviour
     private bool olhandoEsquerda;
     public Vector2 attackOffset = new Vector2(0.8f, -0.2f);
 
-    [Header("Vida")]
-    [SerializeField] private int vidaMaxima = 5;
-    private int vidaAtual;
-
-    [SerializeField] private BarraVida barraVida;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        // Começa o Player com a vida máxima configurada no Inspector.
-        vidaAtual = vidaMaxima;
-
-        // Inicializa a barra mostrando a vida máxima.
-        if (barraVida != null)
-        {
-            barraVida.AtualizarVida(vidaAtual, vidaMaxima);
-        }
     }
 
     // Recebe a direção do movimento através do Input System.
@@ -79,66 +64,9 @@ public class Player : MonoBehaviour
     {
         atacando = true;
 
-        /*attackHitbox.enabled = true;*/
-
         yield return new WaitForSeconds(attackDuration);
 
-        /*attackHitbox.enabled = false;*/
-
         atacando = false;
-    }
-
-    // Reduz a vida do Player e verifica se ele deve morrer.
-    public void ReceberDano(int dano)
-    {
-        vidaAtual -= dano;
-
-        Debug.Log("Player recebeu dano! Vida: " + vidaAtual);
-
-        if (barraVida != null)
-        {
-            barraVida.AtualizarVida(vidaAtual, vidaMaxima);
-        }
-
-        if (vidaAtual <= 0)
-        {
-            Morrer();
-        }
-    }
-
-    public void ReceberBuff(Buff.TipoBuff tipo, float quantidade)
-    {
-        switch (tipo)
-        {
-            case Buff.TipoBuff.vida:
-                vidaAtual += Mathf.RoundToInt(quantidade);
-                vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);
-                barraVida.AtualizarVida(vidaAtual, vidaMaxima);
-                Debug.Log("Player recebeu buff de vida! Vida: " + vidaAtual);
-                break;
-            case Buff.TipoBuff.energia:
-                // Aqui você pode implementar a lógica para energia, se houver.
-                Debug.Log("Player recebeu buff de energia!");
-                break;
-            case Buff.TipoBuff.xp:
-                // Aqui você pode implementar a lógica para XP, se houver.
-                Debug.Log("Player recebeu buff de XP!");
-                break;
-        }
-        if (barraVida != null)
-        {
-            barraVida.AtualizarVida(vidaAtual, vidaMaxima);
-        }
-    }
-
-    // Executado quando a vida do Player chega a zero.
-    private void Morrer()
-    {
-        Debug.Log("Player morreu!");
-
-        // Por enquanto apenas desativa o Player.
-        // Depois podemos substituir por animação, respawn ou Game Over.
-        gameObject.SetActive(false);
     }
 
     private void FixedUpdate()

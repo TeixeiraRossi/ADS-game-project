@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Buff : MonoBehaviour
+public class ItemBuff : MonoBehaviour
 {
     public enum TipoBuff
     {
@@ -13,11 +13,12 @@ public class Buff : MonoBehaviour
     public TipoBuff tipo;
     public float quantidade = 2f;
 
-    void OnTriggerEnter(Collider colisor)
+    private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (colisor.CompareTag("Player"))
+        Debug.Log("colidiu!");
+        if (collider.CompareTag("Player"))
         {
-            Player player = colisor.GetComponent<Player>();
+            BarraVida player = collider.GetComponent<BarraVida>();
             if (player != null)
             {
                 player.ReceberBuff(tipo, quantidade); // Chama o método para aplicar o buff no Player
