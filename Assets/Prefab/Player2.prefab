@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3700875031406475864}
   - component: {fileID: 8203291399795211585}
   - component: {fileID: 7165500497877304369}
+  - component: {fileID: -1590981951860015255}
   m_Layer: 0
   m_Name: Player2
   m_TagString: Player
@@ -240,6 +241,20 @@ CapsuleCollider2D:
   m_Offset: {x: 0.06, y: -0.04}
   m_Size: {x: 0.4, y: 1}
   m_Direction: 0
+--- !u!114 &-1590981951860015255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7325157582633723021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f495df1c134205d44bf17fdd7a8f0559, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BarraVida
+  fillImage: {fileID: 0}
+  vidaMaxima: 10
 --- !u!1001 &3355733771455860289
 PrefabInstance:
   m_ObjectHideFlags: 0
