@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda60d2111e2d7a46ba173669e8cc538, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ataqueDoInimigo
-  dano: 2
+  dano: 1
 --- !u!1 &8162749766788654450
 GameObject:
   m_ObjectHideFlags: 0
