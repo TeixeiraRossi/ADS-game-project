@@ -9,16 +9,17 @@ public class ataqueDoInimigo : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Player playerScript = other.GetComponent<Player>();
-            if (playerScript != null)
-            {
-               BarraVida player = other.GetComponent<BarraVida>();
-                if (player != null)
-                {
-                    player.ReceberDano(dano);
-                    Debug.Log("Player recebeu dano: " + dano);
-                }
-            }
+            if (!other.CompareTag("Player"))
+                return;
+
+            BarraVida playerVida = other.GetComponentInParent<BarraVida>();
+
+            if (playerVida != null)
+                return;
+
+            playerVida.ReceberDano(dano);
+
+            Debug.Log("Player recebeu dano: " + dano);
         }
     }
 }
