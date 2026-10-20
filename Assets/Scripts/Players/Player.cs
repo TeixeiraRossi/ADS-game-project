@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     private Vector2 direcao;
     public float velocidade = 5f;
     public SpriteRenderer sprite;
+    public Animator animator;
 
     [Header("Ataque")]
     public BoxCollider2D attackHitbox;
@@ -28,6 +29,14 @@ public class Player : MonoBehaviour
     public void Mover(InputAction.CallbackContext context)
     {
         direcao = context.ReadValue<Vector2>();
+        if (direcao.x != 0 || direcao.y != 0)
+        {
+            animator.SetBool("estaAndando", true);
+        }
+        else
+        {
+            animator.SetBool("estaAndando", false);
+        }
     }
 
     // Inicia o ataque quando o botão é pressionado.

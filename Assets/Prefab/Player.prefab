@@ -137,8 +137,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5150c758c7f716a488bb10af698c7bf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  velocidade: 5
+  velocidade: 4
   sprite: {fileID: 6188261160661715072}
+  animator: {fileID: -6703990070973558840}
   attackHitbox: {fileID: 2863426256737911027}
   attackPointerPrefab: {fileID: 3017409329597055789, guid: 41ee0cc95864a514ba4536558c200075, type: 3}
   attackDuration: 0.2
