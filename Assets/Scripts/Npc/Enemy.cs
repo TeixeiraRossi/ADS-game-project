@@ -13,6 +13,9 @@ public class Enemy : MonoBehaviour
 
     // Distância mínima que o inimigo mantém do jogador
     [SerializeField] private float distanciaDeParada = 1.5f;
+    [SerializeField] private Animator animator;
+    private Vector2 direcao;
+    public SpriteRenderer sprite;
 
     [Header("Vida")]
 
@@ -83,6 +86,13 @@ public class Enemy : MonoBehaviour
                 player.position,
                 velocidade * Time.deltaTime
             );
+            direcao = (player.position - transform.position).normalized;
+            Flip();
+            animator.SetBool("estaAndando", true);
+        }
+        else
+        {
+            animator.SetBool("estaAndando", false);
         }
     }
 
@@ -174,6 +184,18 @@ public class Enemy : MonoBehaviour
     {
         // Permite que o inimigo volte a se movimentar
         atordoado = false;
+    }
+
+    private void Flip()
+    {
+        if (direcao.x > 0)
+        {
+            sprite.flipX = false;
+        }
+        else if (direcao.x < 0)
+        {
+            sprite.flipX = true;
+        }
     }
 
 
