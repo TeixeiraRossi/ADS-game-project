@@ -15,7 +15,6 @@ public class ItemBuff : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("colidiu!");
         if (collider.CompareTag("Player"))
         {
             BarraVida player = collider.GetComponent<BarraVida>();

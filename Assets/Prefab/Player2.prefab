@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5150c758c7f716a488bb10af698c7bf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  velocidade: 5
+  velocidade: 4
   sprite: {fileID: 6188261160661715072}
   animator: {fileID: 8725493415451601323}
   attackHitbox: {fileID: 4373189063167088994, guid: 2384a421f8fffee419cf0479d975cab5, type: 3}
@@ -255,8 +255,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f495df1c134205d44bf17fdd7a8f0559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarraVida
-  fillImage: {fileID: 0}
+  playerID: 2
+  fillImageVida: {fileID: 0}
+  fillImageEnergia: {fileID: 0}
   vidaMaxima: 10
+  energiaMaxima: 10
 --- !u!95 &8725493415451601323
 Animator:
   serializedVersion: 7
