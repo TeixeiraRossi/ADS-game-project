@@ -1,212 +1,185 @@
-using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    // Guarda a referência para o Transform do jogador
-    private Transform player;
+    public enum EstadoInimigo
+    {
+        Parado,
+        Perseguindo,
+        Atordoado,
+        Morto
+    }
 
     [Header("Movimento")]
-
-    // Velocidade com que o inimigo persegue o jogador
     [SerializeField] private float velocidade = 3f;
-
-    // Distância mínima que o inimigo mantém do jogador
     [SerializeField] private float distanciaDeParada = 1.5f;
     [SerializeField] private Animator animator;
-    private Vector2 direcao;
     public SpriteRenderer sprite;
 
     [Header("Vida")]
-
-    // Quantidade máxima de vida do inimigo
     [SerializeField] private int vidaMaxima = 3;
 
     [Header("Knockback")]
-
-    // Força com que o inimigo será empurrado ao receber um ataque
     [SerializeField] private float forcaKnockback = 1.5f;
-
-    // Tempo que o inimigo ficará atordoado depois de receber o ataque
     [SerializeField] private float duracaoStun = 0.2f;
 
+    [Header("Estado atual â€” diagnÃ³stico")]
+    [SerializeField] private EstadoInimigo estadoAtual;
 
-    // Guarda a quantidade atual de vida do inimigo
+    private Transform player;
     private int vidaAtual;
+    private float tempoRestanteStun;
 
-    // Indica se o inimigo está atordoado
-    private bool atordoado;
+    public EstadoInimigo EstadoAtual => estadoAtual;
 
-
-    // Start é executado uma vez quando o objeto é iniciado
-    private void Start()
+    private void Awake()
     {
-        // Começa o inimigo com a vida máxima configurada
         vidaAtual = vidaMaxima;
+
+        if (animator == null)
+            animator = GetComponent<Animator>();
+
+        if (sprite == null)
+            sprite = GetComponent<SpriteRenderer>();
+
+        TrocarEstado(EstadoInimigo.Parado);
     }
 
-
-    // Update é executado a cada frame
     private void Update()
     {
-        // Se o inimigo estiver atordoado,
-        // ele não pode se movimentar
-        if (atordoado)
+        if (estadoAtual == EstadoInimigo.Morto)
             return;
 
+        if (estadoAtual == EstadoInimigo.Atordoado)
+        {
+            tempoRestanteStun -= Time.deltaTime;
 
-        // Procura o objeto que possui a Tag "Player"
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (tempoRestanteStun > 0f)
+                return;
 
+            // Ao terminar o stun, reavalia o alvo e a distÃ¢ncia.
+        }
 
-        // Se não encontrou nenhum jogador,
-        // interrompe a função
-        if (playerObject == null)
+        AtualizarAlvo();
+
+        if (player == null)
+        {
+            TrocarEstado(EstadoInimigo.Parado);
             return;
+        }
 
-
-        // Guarda o Transform do jogador encontrado
-        player = playerObject.transform;
-
-
-        // Calcula a distância entre o inimigo e o jogador
-        float distanciaAtual = Vector2.Distance(
+        float distancia = Vector2.Distance(
             transform.position,
             player.position
         );
 
+        TrocarEstado(
+            distancia > distanciaDeParada
+                ? EstadoInimigo.Perseguindo
+                : EstadoInimigo.Parado
+        );
 
-        // Se o inimigo estiver longe o suficiente do jogador,
-        // ele começa a persegui-lo
-        if (distanciaAtual > distanciaDeParada)
-        {
-            // Move o inimigo na direção do jogador
-            transform.position = Vector2.MoveTowards(
-                transform.position,
-                player.position,
-                velocidade * Time.deltaTime
-            );
-            direcao = (player.position - transform.position).normalized;
-            Flip();
-            animator.SetBool("estaAndando", true);
-        }
-        else
-        {
-            animator.SetBool("estaAndando", false);
-        }
+        if (estadoAtual == EstadoInimigo.Perseguindo)
+            Perseguir();
     }
 
-    // Função chamada quando o inimigo colide com Player
-    private void OnTriggerEnter2D(Collider2D collider)
+    private void AtualizarAlvo()
     {
-        if (collider.CompareTag("Player"))
+        // MantÃ©m o mesmo alvo enquanto ele estiver ativo.
+        if (player != null && player.gameObject.activeInHierarchy)
+            return;
+
+        player = null;
+
+        GameObject jogador =
+            GameObject.FindGameObjectWithTag("Player");
+
+        if (jogador != null)
+            player = jogador.transform;
+    }
+
+    private void Perseguir()
+    {
+        Vector2 direcao =
+            (Vector2)(player.position - transform.position);
+
+        if (sprite != null && direcao.x != 0f)
+            sprite.flipX = direcao.x < 0f;
+
+        // Preserva a coordenada Z do inimigo.
+        Vector3 destino = new Vector3(
+            player.position.x,
+            player.position.y,
+            transform.position.z
+        );
+
+        // Limita o passo para nÃ£o avanÃ§ar alÃ©m da distÃ¢ncia de parada.
+        float distancia = direcao.magnitude;
+        float passo = Mathf.Min(
+            Mathf.Max(0f, velocidade) * Time.deltaTime,
+            Mathf.Max(0f, distancia - distanciaDeParada)
+        );
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            destino,
+            passo
+        );
+    }
+
+    private void TrocarEstado(EstadoInimigo novoEstado)
+    {
+        estadoAtual = novoEstado;
+
+        if (animator != null)
         {
-            Player playerScript = collider.GetComponent<Player>();
-            if (playerScript != null)
-            {
-                //playerScript.ReceberDano(1); // Aplica 1 de dano ao jogador
-                Debug.Log("Inimigo colidiu com o Player! Dano aplicado: 1");
-            }
+            animator.SetBool(
+                "estaAndando",
+                novoEstado == EstadoInimigo.Perseguindo
+            );
         }
     }
 
-    // Função chamada quando o inimigo recebe dano
     public void ReceberDano(int dano)
     {
-        // Diminui a vida do inimigo
-        vidaAtual -= dano;
+        if (estadoAtual == EstadoInimigo.Morto || dano <= 0)
+            return;
 
-
-        // Mostra no Console quanto de vida o inimigo ainda possui
+        vidaAtual = Mathf.Max(0, vidaAtual - dano);
         Debug.Log("Inimigo recebeu dano! Vida: " + vidaAtual);
 
+        // Dano fatal tem prioridade sobre stun e knockback.
+        if (vidaAtual == 0)
+        {
+            Morrer();
+            return;
+        }
 
-        // Aplica o knockback e o stun
+        AtualizarAlvo();
         AplicarKnockback();
 
-
-        // Verifica se a vida chegou a zero
-        if (vidaAtual <= 0)
-        {
-            // Se chegou a zero, o inimigo morre
-            Morrer();
-        }
+        // Outro golpe reinicia a duraÃ§Ã£o, sem callbacks pendentes.
+        // O stun funciona mesmo quando nÃ£o existe alvo.
+        tempoRestanteStun = Mathf.Max(0f, duracaoStun);
+        TrocarEstado(EstadoInimigo.Atordoado);
     }
 
-    /*public void AplicarDano(int dano)
-    {
-        if(player != null)
-        {
-            Player playerScript = player.GetComponent<Player>();
-            if(playerScript != null)
-            {
-                playerScript.ReceberDano(dano);
-            }
-        }
-    }*/
-
-
-    // Função responsável por empurrar o inimigo para trás
-    // e deixá-lo atordoado por alguns segundos
     private void AplicarKnockback()
     {
-        // Se não temos referência ao jogador,
-        // não conseguimos calcular a direção do knockback
         if (player == null)
             return;
 
-
-        // Ativa o estado de atordoamento
-        atordoado = true;
-
-
-        // Calcula a direção contrária ao jogador
-        // Jogador está à esquerda do inimigo
-        // O inimigo será empurrado para a direita
         Vector2 direcaoKnockback =
-            (transform.position - player.position).normalized;
+            ((Vector2)(transform.position - player.position)).normalized;
 
-
-        // Move o inimigo para trás utilizando
-        // a força configurada no Inspector
         transform.position +=
             (Vector3)(direcaoKnockback * forcaKnockback);
-
-
-        // Depois do tempo configurado,
-        // chama a função que encerra o stun
-        Invoke(nameof(FinalizarStun), duracaoStun);
     }
 
-
-    // Função chamada depois que o tempo de stun termina
-    private void FinalizarStun()
-    {
-        // Permite que o inimigo volte a se movimentar
-        atordoado = false;
-    }
-
-    private void Flip()
-    {
-        if (direcao.x > 0)
-        {
-            sprite.flipX = false;
-        }
-        else if (direcao.x < 0)
-        {
-            sprite.flipX = true;
-        }
-    }
-
-
-    // Função responsável pela morte do inimigo
     private void Morrer()
     {
-        // Mostra uma mensagem no Console
+        TrocarEstado(EstadoInimigo.Morto);
         Debug.Log("Inimigo morreu!");
-
-
-        // Remove o inimigo da cena
         Destroy(gameObject);
     }
 }
