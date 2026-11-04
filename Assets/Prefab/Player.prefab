@@ -142,8 +142,25 @@ MonoBehaviour:
   animator: {fileID: -6703990070973558840}
   attackHitbox: {fileID: 2863426256737911027}
   attackPointerPrefab: {fileID: 3017409329597055789, guid: 41ee0cc95864a514ba4536558c200075, type: 3}
-  attackDuration: 0.2
   attackOffset: {x: 0.8, y: 0}
+  golpes:
+  - preparacao: 0.06
+    duracaoAtiva: 0.12
+    recuperacao: 0.24
+    dano: 1
+    multiplicadorKnockback: 0.25
+  - preparacao: 0.06
+    duracaoAtiva: 0.12
+    recuperacao: 0.24
+    dano: 1
+    multiplicadorKnockback: 0.25
+  - preparacao: 0.1
+    duracaoAtiva: 0.16
+    recuperacao: 0.4
+    dano: 2
+    multiplicadorKnockback: 1
+  janelaEncadeamento: 0.2
+  fatorMovimentoAtacando: 0.5
 --- !u!114 &8203291399795211585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,10 +322,6 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1233965741385475208, guid: 41ee0cc95864a514ba4536558c200075, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 3700875031406475864}
     - target: {fileID: 3017409329597055789, guid: 41ee0cc95864a514ba4536558c200075, type: 3}
       propertyPath: m_Name
       value: AttackPoint

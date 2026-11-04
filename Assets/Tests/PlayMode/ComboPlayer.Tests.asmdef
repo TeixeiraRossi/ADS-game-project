@@ -1,0 +1,6 @@
+{
+    "name": "ComboPlayer.Tests",
+    "references": [],
+    "optionalUnityReferences": ["TestAssemblies"],
+    "autoReferenced": false
+}

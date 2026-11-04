@@ -54,6 +54,13 @@ public class BarraVida : MonoBehaviour
 
     public void ReceberDano(float dano)
     {
+        if (dano <= 0f || vidaAtual <= 0f)
+            return;
+
+        Player jogador = GetComponent<Player>();
+        if (jogador != null)
+            jogador.CancelarCombo();
+
         vidaAtual -= dano; // Reduz a vida atual pelo valor do dano
         vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);// Garante que a vida não fique abaixo de 0 ou acima da vida máxima
 
