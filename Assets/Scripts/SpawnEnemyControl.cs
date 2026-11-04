@@ -91,7 +91,8 @@ public class SpawnEnemyControl : MonoBehaviour
 
     private void Update()
     {
-        if (!PartidaEmAndamento)
+        // Inclusive um spawn pendente com tempo zero aguarda sair da pausa.
+        if (!PartidaEmAndamento || Time.deltaTime <= 0f)
             return;
 
         // Conta somente inimigos criados por este controlador.
