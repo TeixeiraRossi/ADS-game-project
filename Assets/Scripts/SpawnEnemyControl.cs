@@ -41,6 +41,8 @@ public class SpawnEnemyControl : MonoBehaviour
 
     public EstadoPartida EstadoAtual => estadoAtual;
     public int OndaAtual => ondaAtual;
+    public int TotalOndas => Mathf.Max(1, totalOndas);
+    public float TempoIntervalo => Mathf.Max(0f, tempoRestante);
     public int InimigosRestantes => inimigosParaGerar + inimigosDaOnda.Count;
 
     private bool PartidaEmAndamento =>

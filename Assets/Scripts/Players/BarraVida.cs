@@ -22,18 +22,20 @@ public class BarraVida : MonoBehaviour
     {
         if (fillImageVida == null)
         {
-            fillImageVida = GameObject.Find("FillVida_P" + playerID).GetComponent<Image>();
+            GameObject imagem = GameObject.Find("FillVida_P" + playerID);
+            if (imagem != null)
+                fillImageVida = imagem.GetComponent<Image>();
         }
 
         if (fillImageEnergia == null)
         {
-            fillImageEnergia = GameObject.Find("FillEnergia_P" + playerID).GetComponent<Image>();
+            GameObject imagem = GameObject.Find("FillEnergia_P" + playerID);
+            if (imagem != null)
+                fillImageEnergia = imagem.GetComponent<Image>();
         }
 
         vidaAtual = vidaMaxima; // Inicializa a vida atual com a vida máxima
-        vidaAtual = 5f;
         energiaAtual = energiaMaxima; // Inicializa a energia atual com a energia máxima
-        energiaAtual = 1f;
         AtualizarVida();
         AtualizarEnergia();
     }
@@ -100,11 +102,13 @@ public class BarraVida : MonoBehaviour
     // Atualiza a barra de acordo com a vida atual do Player.
     public void AtualizarVida()
     {
-        fillImageVida.fillAmount = vidaAtual / vidaMaxima;
+        if (fillImageVida != null)
+            fillImageVida.fillAmount = vidaMaxima > 0f ? vidaAtual / vidaMaxima : 0f;
     }
 
     public void AtualizarEnergia()
     {
-        fillImageEnergia.fillAmount = energiaAtual / energiaMaxima;
+        if (fillImageEnergia != null)
+            fillImageEnergia.fillAmount = energiaMaxima > 0f ? energiaAtual / energiaMaxima : 0f;
     }
 }   
