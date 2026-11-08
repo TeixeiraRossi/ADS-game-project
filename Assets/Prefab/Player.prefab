@@ -255,6 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f495df1c134205d44bf17fdd7a8f0559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarraVida
+  playerID: 1
   fillImageVida: {fileID: 0}
   fillImageEnergia: {fileID: 0}
   vidaMaxima: 10
