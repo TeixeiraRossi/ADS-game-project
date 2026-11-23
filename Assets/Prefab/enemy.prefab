@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3886967810521151821}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.45, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,7 +40,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3886967810521151821}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -204,6 +204,11 @@ MonoBehaviour:
   distanciaDeParada: 1.5
   animator: {fileID: 3367945646785832427}
   sprite: {fileID: 7591462527262793246}
+  ataqueInimigo: {fileID: 346027816588119298}
+  duracaoPreparacao: 0.4
+  duracaoAtaque: 0.15
+  duracaoRecuperacao: 0.6
+  corPreparacao: {r: 1, g: 0.5, b: 0.2, a: 1}
   vidaMaxima: 3
   forcaKnockback: 1.5
   duracaoStun: 0.2
