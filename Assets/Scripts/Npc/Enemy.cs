@@ -235,6 +235,13 @@ public class Enemy : MonoBehaviour
 
     public void ReceberDano(int dano)
     {
+        AtualizarAlvo();
+        Vector3 origem = player != null ? player.position : transform.position;
+        ReceberDano(dano, 1f, origem);
+    }
+
+    public void ReceberDano(int dano, float multiplicadorKnockback, Vector3 origem)
+    {
         if (estadoAtual == EstadoInimigo.Morto || dano <= 0)
             return;
 
@@ -248,24 +255,21 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        AtualizarAlvo();
-        AplicarKnockback();
+        AplicarKnockback(multiplicadorKnockback, origem);
 
         // Outro golpe reinicia a duração, sem callbacks pendentes.
         // O stun funciona mesmo quando não existe alvo.
         TrocarEstado(EstadoInimigo.Atordoado);
     }
 
-    private void AplicarKnockback()
+    private void AplicarKnockback(float multiplicador, Vector3 origem)
     {
-        if (player == null)
-            return;
-
+        // A origem é o atacante real, inclusive com dois jogadores.
         Vector2 direcaoKnockback =
-            ((Vector2)(transform.position - player.position)).normalized;
+            ((Vector2)(transform.position - origem)).normalized;
 
-        transform.position +=
-            (Vector3)(direcaoKnockback * forcaKnockback);
+        transform.position += (Vector3)(direcaoKnockback *
+            forcaKnockback * Mathf.Max(0f, multiplicador));
     }
 
     private void Morrer()
