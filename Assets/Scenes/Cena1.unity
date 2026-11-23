@@ -165,6 +165,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   enemy: {fileID: 8162749766788654450, guid: 47301e814df688c46827fe6448d32f82, type: 3}
+  pontosSpawn: []
+  intervaloEntreSpawns: 0.6
+  limiteInimigosVivos: 6
+  distanciaSpawnPadrao: 6
+  totalOndas: 5
+  inimigosPrimeiraOnda: 3
+  aumentoPorOnda: 2
+  intervaloEntreOndas: 5
+  mostrarHUD: 1
 --- !u!61 &39976117
 BoxCollider2D:
   m_ObjectHideFlags: 0
