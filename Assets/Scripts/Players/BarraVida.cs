@@ -17,6 +17,12 @@ public class BarraVida : MonoBehaviour
     [Header("Energia valores")]
     public float energiaMaxima;
     private float energiaAtual;
+    private Player jogador;
+
+    private void Awake()
+    {
+        jogador = GetComponent<Player>();
+    }
 
     private void Start()
     {
@@ -52,8 +58,21 @@ public class BarraVida : MonoBehaviour
         }
     }
 
+    public bool TentarGastarEnergia(float custo)
+    {
+        if (custo <= 0f || energiaAtual < custo)
+            return false;
+
+        energiaAtual -= custo;
+        AtualizarEnergia();
+        return true;
+    }
+
     public void ReceberDano(float dano)
     {
+        if (jogador != null && jogador.EstaEsquivando)
+            return;
+
         vidaAtual -= dano; // Reduz a vida atual pelo valor do dano
         vidaAtual = Mathf.Clamp(vidaAtual, 0, vidaMaxima);// Garante que a vida não fique abaixo de 0 ou acima da vida máxima
 

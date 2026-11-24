@@ -201,6 +201,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: b2134b25-51c9-4710-83c1-788246a811e0
     m_ActionName: 'Player/Atacar[/Keyboard/j]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3700875031406475864}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: Esquivar
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: ''
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1668fc24-dfcf-4fdc-921d-5bd035381f78
+    m_ActionName: 'Player/Esquivar[/Keyboard/space,/Gamepad/buttonEast]'
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

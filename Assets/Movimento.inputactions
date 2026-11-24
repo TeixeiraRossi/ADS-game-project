@@ -23,6 +23,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Esquivar",
+                    "type": "Button",
+                    "id": "1668fc24-dfcf-4fdc-921d-5bd035381f78",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -111,6 +120,28 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Atacar",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "425bbfb2-3cd2-4f61-aecc-d377dfc5abda",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";WASD",
+                    "action": "Esquivar",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "985e294f-1170-40c6-afc3-d8ad0876fcb6",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Esquivar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

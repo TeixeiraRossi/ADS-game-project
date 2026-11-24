@@ -1,16 +1,30 @@
 using System.Collections;
-using UnityEditor.Tilemaps;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    private static readonly List<Player> jogadoresAtivos = new List<Player>();
+
+    internal static IReadOnlyList<Player> JogadoresAtivos => jogadoresAtivos;
+
     [Header("Movimento")]
     private Rigidbody2D rb;
+    private BarraVida barraVida;
     private Vector2 direcao;
     public float velocidade = 5f;
     public SpriteRenderer sprite;
     public Animator animator;
+
+    [Header("Esquiva")]
+    [SerializeField, Min(0.01f)] private float duracaoEsquiva = 0.16f;
+    [SerializeField, Min(0.1f)] private float velocidadeEsquiva = 12f;
+    [SerializeField, Min(0.1f)] private float custoEsquiva = 2f;
+    private Vector2 direcaoEsquiva;
+    private float tempoEsquivaRestante;
+
+    public bool EstaEsquivando { get; private set; }
 
     [Header("Ataque")]
     public BoxCollider2D attackHitbox;
@@ -23,26 +37,36 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        barraVida = GetComponent<BarraVida>();
+    }
+
+    private void OnEnable()
+    {
+        jogadoresAtivos.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        jogadoresAtivos.Remove(this);
+
+        if (EstaEsquivando)
+            rb.linearVelocity = Vector2.zero;
+
+        EstaEsquivando = false;
+        tempoEsquivaRestante = 0f;
     }
 
     // Recebe a direção do movimento através do Input System.
     public void Mover(InputAction.CallbackContext context)
     {
         direcao = context.ReadValue<Vector2>();
-        if (direcao.x != 0 || direcao.y != 0)
-        {
-            animator.SetBool("estaAndando", true);
-        }
-        else
-        {
-            animator.SetBool("estaAndando", false);
-        }
+        AtualizarAnimacao();
     }
 
     // Inicia o ataque quando o botão é pressionado.
     public void Atacar(InputAction.CallbackContext context)
     {
-        if (context.started && !atacando)
+        if (context.started && !atacando && !EstaEsquivando)
         {
             if (attackPointerPrefab != null)
             {
@@ -78,28 +102,59 @@ public class Player : MonoBehaviour
         atacando = false;
     }
 
+    public void Esquivar(InputAction.CallbackContext context)
+    {
+        if (!context.performed || !isActiveAndEnabled || Time.timeScale <= 0f ||
+            EstaEsquivando || atacando || barraVida == null ||
+            !barraVida.TentarGastarEnergia(custoEsquiva))
+            return;
+
+        direcaoEsquiva = direcao == Vector2.zero
+            ? (olhandoEsquerda ? Vector2.left : Vector2.right)
+            : direcao.normalized;
+        tempoEsquivaRestante = Mathf.Max(0.01f, duracaoEsquiva);
+        EstaEsquivando = true;
+        AtualizarAnimacao();
+    }
+
     private void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(
-            direcao.x * velocidade,
-            direcao.y * velocidade
-        );
+        if (EstaEsquivando)
+        {
+            if (tempoEsquivaRestante > 0f)
+            {
+                float passo = Mathf.Min(tempoEsquivaRestante, Time.fixedDeltaTime);
+                rb.linearVelocity = direcaoEsquiva * (velocidadeEsquiva * passo / Time.fixedDeltaTime);
+                tempoEsquivaRestante -= passo;
+                return;
+            }
+
+            EstaEsquivando = false;
+            AtualizarAnimacao();
+        }
+
+        rb.linearVelocity = direcao * velocidade;
     }
 
     private void Update()
     {
-        Flip();
+        Flip(EstaEsquivando ? direcaoEsquiva : direcao);
+    }
+
+    private void AtualizarAnimacao()
+    {
+        animator.SetBool("estaAndando", EstaEsquivando || direcao != Vector2.zero);
     }
 
     // Atualiza a direção visual do Player de acordo com o movimento.
-    private void Flip()
+    private void Flip(Vector2 movimento)
     {
-        if (direcao.x > 0)
+        if (movimento.x > 0)
         {
             olhandoEsquerda = false;
             sprite.flipX = false;
         }
-        else if (direcao.x < 0)
+        else if (movimento.x < 0)
         {
             olhandoEsquerda = true;
             sprite.flipX = true;

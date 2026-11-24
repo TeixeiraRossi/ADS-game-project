@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
     [Header("Estado atual — diagnóstico")]
     [SerializeField] private EstadoInimigo estadoAtual;
 
-    private Transform player;
+    private Player alvo;
     private int vidaAtual;
     private float tempoRestanteEstado;
     private Color corOriginal;
@@ -64,6 +64,7 @@ public class Enemy : MonoBehaviour
 
     private void OnDisable()
     {
+        alvo = null;
         // Desativar o componente também interrompe qualquer golpe.
         TrocarEstado(estadoAtual == EstadoInimigo.Morto
             ? EstadoInimigo.Morto
@@ -110,7 +111,7 @@ public class Enemy : MonoBehaviour
 
         AtualizarAlvo();
 
-        if (player == null)
+        if (alvo == null)
         {
             TrocarEstado(EstadoInimigo.Parado);
             return;
@@ -118,7 +119,7 @@ public class Enemy : MonoBehaviour
 
         float distancia = Vector2.Distance(
             transform.position,
-            player.position
+            alvo.transform.position
         );
 
         TrocarEstado(
@@ -135,36 +136,47 @@ public class Enemy : MonoBehaviour
 
     private bool AlvoAtivo()
     {
-        return player != null && player.gameObject.activeInHierarchy;
+        return alvo != null && alvo.isActiveAndEnabled && alvo.CompareTag("Player");
     }
 
     private void AtualizarAlvo()
     {
-        // Mantém o mesmo alvo enquanto ele estiver ativo.
-        if (player != null && player.gameObject.activeInHierarchy)
-            return;
+        Vector2 posicao = transform.position;
 
-        player = null;
+        // Em caso de empate, prioriza o alvo atual.
+        Player maisProximo = AlvoAtivo() ? alvo : null;
+        float menorDistancia = maisProximo != null
+            ? ((Vector2)maisProximo.transform.position - posicao).sqrMagnitude
+            : float.PositiveInfinity;
 
-        GameObject jogador =
-            GameObject.FindGameObjectWithTag("Player");
+        foreach (Player jogador in Player.JogadoresAtivos)
+        {
+            if (jogador == maisProximo || !jogador.CompareTag("Player"))
+                continue;
 
-        if (jogador != null)
-            player = jogador.transform;
+            float distancia = ((Vector2)jogador.transform.position - posicao).sqrMagnitude;
+            if (distancia >= menorDistancia)
+                continue;
+
+            maisProximo = jogador;
+            menorDistancia = distancia;
+        }
+
+        alvo = maisProximo;
     }
 
     private void Perseguir()
     {
         Vector2 direcao =
-            (Vector2)(player.position - transform.position);
+            (Vector2)(alvo.transform.position - transform.position);
 
         if (sprite != null && direcao.x != 0f)
             sprite.flipX = direcao.x < 0f;
 
         // Preserva a coordenada Z do inimigo.
         Vector3 destino = new Vector3(
-            player.position.x,
-            player.position.y,
+            alvo.transform.position.x,
+            alvo.transform.position.y,
             transform.position.z
         );
 
@@ -202,7 +214,7 @@ public class Enemy : MonoBehaviour
                 // A direção fica fixa durante a preparação e o golpe.
                 if (AlvoAtivo())
                 {
-                    float direcaoX = player.position.x - transform.position.x;
+                    float direcaoX = alvo.transform.position.x - transform.position.x;
                     if (sprite != null && direcaoX != 0f)
                         sprite.flipX = direcaoX < 0f;
 
@@ -248,7 +260,9 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        AtualizarAlvo();
+        if (!AlvoAtivo())
+            AtualizarAlvo();
+
         AplicarKnockback();
 
         // Outro golpe reinicia a duração, sem callbacks pendentes.
@@ -258,11 +272,11 @@ public class Enemy : MonoBehaviour
 
     private void AplicarKnockback()
     {
-        if (player == null)
+        if (alvo == null)
             return;
 
         Vector2 direcaoKnockback =
-            ((Vector2)(transform.position - player.position)).normalized;
+            ((Vector2)(transform.position - alvo.transform.position)).normalized;
 
         transform.position +=
             (Vector3)(direcaoKnockback * forcaKnockback);

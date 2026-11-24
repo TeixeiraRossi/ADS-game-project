@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class SpawnEnemyControl : MonoBehaviour
 {
@@ -38,6 +40,9 @@ public class SpawnEnemyControl : MonoBehaviour
     private int indiceSpawn;
     private float tempoRestante;
     private GUIStyle estiloHUD;
+    private GUIStyle estiloTitulo;
+    private GUIStyle estiloDetalhe;
+    private bool recarregandoCena;
 
     public EstadoPartida EstadoAtual => estadoAtual;
     public int OndaAtual => ondaAtual;
@@ -244,6 +249,22 @@ public class SpawnEnemyControl : MonoBehaviour
         tempoRestante = 0f;
     }
 
+    private void RecarregarCena()
+    {
+        if (recarregandoCena)
+            return;
+
+        Scene cena = gameObject.scene;
+        if (cena.buildIndex < 0)
+        {
+            Debug.LogError("Inclua a cena da arena na lista de cenas do build para reiniciar a partida.", this);
+            return;
+        }
+
+        recarregandoCena = true;
+        SceneManager.LoadSceneAsync(cena.buildIndex, LoadSceneMode.Single);
+    }
+
     private void OnGUI()
     {
         if (!mostrarHUD)
@@ -251,35 +272,90 @@ public class SpawnEnemyControl : MonoBehaviour
 
         if (estiloHUD == null)
         {
-            estiloHUD = new GUIStyle(GUI.skin.box);
-            estiloHUD.fontSize = 18;
-            estiloHUD.alignment = TextAnchor.MiddleCenter;
-            estiloHUD.wordWrap = true;
+            estiloHUD = new GUIStyle(GUI.skin.box)
+            {
+                fontSize = 18,
+                alignment = TextAnchor.MiddleCenter,
+                wordWrap = true
+            };
+            estiloTitulo = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 24,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter
+            };
+            estiloDetalhe = new GUIStyle(GUI.skin.label)
+            {
+                fontSize = 16,
+                alignment = TextAnchor.MiddleCenter,
+                wordWrap = true
+            };
         }
 
-        string texto;
+        int ondas = Mathf.Max(1, totalOndas);
+        float largura = Mathf.Min(400f, Screen.width - 24f);
+        float esquerda = (Screen.width - largura) / 2f;
+
         switch (estadoAtual)
         {
             case EstadoPartida.Aguardando:
-                texto = "Entre na arena para iniciar";
+                if (PlayerInput.all.Count > 0)
+                {
+                    GUI.Box(new Rect(esquerda, Screen.height - 68f, largura, 56f),
+                        "Vá para a direita para iniciar a primeira onda.", estiloHUD);
+                    break;
+                }
+
+                DesenharPainel(
+                    new Rect(esquerda, (Screen.height - 148f) / 2f, largura, 148f),
+                    "Sobreviva na arena",
+                    "Derrote todos os inimigos de " + ondas + " ondas.\n" +
+                    "W para entrar  |  WASD para mover\n" +
+                    "J para atacar  |  Espaço para esquivar",
+                    false);
                 break;
-            case EstadoPartida.Intervalo:
-                texto = "Onda " + ondaAtual + " concluída!\nPróxima onda em " +
-                    Mathf.CeilToInt(Mathf.Max(0f, tempoRestante)) + " s";
-                break;
+
             case EstadoPartida.Vitoria:
-                texto = "Vitória!\nTodas as ondas foram concluídas";
-                break;
             case EstadoPartida.Derrota:
-                texto = "Derrota!\nReinicie a cena para tentar novamente";
+                bool venceu = estadoAtual == EstadoPartida.Vitoria;
+                DesenharPainel(
+                    new Rect(esquerda, (Screen.height - 148f) / 2f, largura, 148f),
+                    venceu ? "Vitória!" : "Derrota",
+                    venceu
+                        ? "Você concluiu todas as " + ondas + " ondas."
+                        : "Você chegou à onda " + ondaAtual + " de " + ondas + ".",
+                    true);
                 break;
+
+            case EstadoPartida.Intervalo:
+                GUI.Box(new Rect(esquerda, 12f, largura, 72f),
+                    "Onda " + ondaAtual + " concluída!\nPróxima onda em " +
+                    Mathf.CeilToInt(Mathf.Max(0f, tempoRestante)) + " s", estiloHUD);
+                break;
+
             default:
-                texto = "Onda " + ondaAtual + " / " + Mathf.Max(1, totalOndas) +
+                GUI.Box(new Rect(esquerda, 12f, largura, 72f),
+                    "Onda " + ondaAtual + " / " + ondas +
                     "\nInimigos restantes: " + InimigosRestantes +
-                    "  |  Na arena: " + inimigosDaOnda.Count;
+                    "  |  Na arena: " + inimigosDaOnda.Count, estiloHUD);
                 break;
         }
+    }
 
-        GUI.Box(new Rect((Screen.width - 360f) / 2f, 12f, 360f, 72f), texto, estiloHUD);
+    private void DesenharPainel(Rect painel, string titulo, string detalhe, bool mostrarReinicio)
+    {
+        Color corAnterior = GUI.color;
+        GUI.color = new Color(0.075f, 0.067f, 0.13f, 0.96f);
+        GUI.DrawTexture(painel, Texture2D.whiteTexture);
+        GUI.color = corAnterior;
+
+        GUI.Label(new Rect(painel.x + 12f, painel.y + 12f, painel.width - 24f, 36f),
+            titulo, estiloTitulo);
+        GUI.Label(new Rect(painel.x + 12f, painel.y + 48f, painel.width - 24f, mostrarReinicio ? 32f : 78f),
+            detalhe, estiloDetalhe);
+
+        if (mostrarReinicio && !recarregandoCena &&
+            GUI.Button(new Rect(painel.center.x - 90f, painel.yMax - 52f, 180f, 36f), "Jogar novamente"))
+            RecarregarCena();
     }
 }
